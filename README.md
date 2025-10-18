@@ -1,5 +1,5 @@
 # dedupdf
-Remove duplicated pages from PDF files (like animations in PDF export slides.
+Remove duplicated pages from PDF files (like animations in PDF export slides).
 
 ### Install with conda
 ```
