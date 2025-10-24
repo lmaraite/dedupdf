@@ -27,18 +27,14 @@ class PdfHandler:
         """
         page_numbers_to_delete = []
 
-        previous_page = self.__reader.pages[0]
-        previous_heading = self.__get_heading(previous_page)
-        previous_first_line = self.__get_first_line(previous_page)
+        previous_page = Page(self.__reader.pages[0])
 
         for i in range(1, len(self.__reader.pages)):
-            heading = self.__get_heading(self.__reader.pages[i])
-            first_line = self.__get_first_line(self.__reader.pages[i])
-            if heading == previous_heading and first_line == previous_first_line:
+            page = Page(self.__reader.pages[i])
+
+            if page.heading == previous_page.heading and page.first_line == previous_page.first_line:
                 page_numbers_to_delete.append(i-1)
-            previous_page = self.__reader.pages[i]
-            previous_heading = heading
-            previous_first_line = first_line
+            previous_page = page
         
         for i in range(len(page_numbers_to_delete)):
             # we need to subtract i, because the number of pages changes when we delete a page
@@ -50,23 +46,44 @@ class PdfHandler:
         """
         self.__writer.write(self.output_file_name)
 
+class Page:
+    """
+    Represents a PDF page.
+
+    Attributes:
+        heading (str): The heading of the PDF page
+        first_line (str): The first line of the PDF page
+    """
+
+    def __init__(self, page: PageObject):
+        """
+        Initialize Page  
+
+        Args: 
+            page (pypdf.PageObject): The object from which this page should be created
+        """
+        lines = page.extract_text().split("\n")
+        num_lines = len(lines)
+
+        if num_lines == 0:
+            self.heading = ""
+            self.first_line = ""
+            return
+
+        if num_lines == 1:
+            self.heading = self.first_line = lines[0]
+            return 
+        
+        if self.__is_date(lines[0]):
+            self.heading = lines[1]
+            self.first_line = lines[2] if num_lines > 2 else lines[0]
+        else:
+            self.heading = lines[0]
+            self.first_line = lines[1]
+
     def __is_date(self, s: str) -> bool:
         try:
             dateutil.parser.parse(s)
             return True
         except ValueError:
             return False
-
-    def __get_heading(self, page: PageObject) -> str:
-        lines = page.extract_text().split("\n")
-        if self.__is_date(lines[0]) and len(lines) > 1:
-            return lines[1]
-        return lines[0]
-
-    def __get_first_line(self, page: PageObject) -> str:
-        lines = page.extract_text().split("\n")
-        if self.__is_date(lines[0]) and len(lines) > 2:
-            return lines[2]
-        if len(lines) > 1:
-            return lines[1]
-        return lines[0]
