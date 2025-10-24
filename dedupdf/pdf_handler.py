@@ -29,13 +29,16 @@ class PdfHandler:
 
         previous_page = self.__reader.pages[0]
         previous_heading = self.__get_heading(previous_page)
+        previous_first_line = self.__get_first_line(previous_page)
 
         for i in range(1, len(self.__reader.pages)):
             heading = self.__get_heading(self.__reader.pages[i])
-            if heading == previous_heading:
+            first_line = self.__get_first_line(self.__reader.pages[i])
+            if heading == previous_heading and first_line == previous_first_line:
                 page_numbers_to_delete.append(i-1)
             previous_page = self.__reader.pages[i]
             previous_heading = heading
+            previous_first_line = first_line
         
         for i in range(len(page_numbers_to_delete)):
             # we need to subtract i, because the number of pages changes when we delete a page
@@ -56,6 +59,14 @@ class PdfHandler:
 
     def __get_heading(self, page: PageObject) -> str:
         lines = page.extract_text().split("\n")
-        if self.__is_date(lines[0]):
+        if self.__is_date(lines[0]) and len(lines) > 1:
+            return lines[1]
+        return lines[0]
+
+    def __get_first_line(self, page: PageObject) -> str:
+        lines = page.extract_text().split("\n")
+        if self.__is_date(lines[0]) and len(lines) > 2:
+            return lines[2]
+        if len(lines) > 1:
             return lines[1]
         return lines[0]

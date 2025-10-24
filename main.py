@@ -26,7 +26,7 @@ def main():
     args = get_cli_args()
 
     output_file_name = DEFAULT_OUTPUT_FILE_NAME
-    if args.output is not None:
+    if args.output != None:
         output_file_name = args.output
 
     pdf_handler = PdfHandler(args.filename, output_file_name)

@@ -8,7 +8,10 @@ class TestPdfHandler(unittest.TestCase):
     output_file_name = "tests/resources/output.pdf"
 
     def tearDown(self):
-       os.remove(self.output_file_name) 
+        try:
+            os.remove(self.output_file_name) 
+        except:
+            pass
 
     def test_deduplicate_pdf(self): 
         pdf_handler = PdfHandler(self.input_file_name, self.output_file_name)
