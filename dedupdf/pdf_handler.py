@@ -2,31 +2,50 @@ import dateutil
 from pypdf import PdfReader, PdfWriter, PageObject
 
 class PdfHandler:
+    """
+    Handles PDF reading, deduplication, and writing.
 
-    def __init__(self, input_file_name, output_file_name):
-        self.reader = PdfReader(input_file_name)
-        self.writer = PdfWriter(input_file_name)
+    Attributes:
+        output_file_name (str): name of the file to write the modified PDF to
+    """
+
+    def __init__(self, input_file_name: str, output_file_name: str):
+        """
+        Initialize PdfHandler with input and output filenames.
+
+        Args:
+            input_file_name (str): Input PDF filename.
+            output_file_name (str): Output PDF filename.
+        """
+        self.__reader = PdfReader(input_file_name)
+        self.__writer = PdfWriter(input_file_name)
         self.output_file_name = output_file_name
 
     def deduplicate_pdf(self):
+        """
+        Remove duplicated pages from the PDF based on headings.
+        """
         page_numbers_to_delete = []
 
-        previous_page = self.reader.pages[0]
+        previous_page = self.__reader.pages[0]
         previous_heading = self.__get_heading(previous_page)
 
-        for i in range(1, len(self.reader.pages)):
-            heading = self.__get_heading(self.reader.pages[i])
+        for i in range(1, len(self.__reader.pages)):
+            heading = self.__get_heading(self.__reader.pages[i])
             if heading == previous_heading:
                 page_numbers_to_delete.append(i-1)
-            previous_page = self.reader.pages[i]
+            previous_page = self.__reader.pages[i]
             previous_heading = heading
         
         for i in range(len(page_numbers_to_delete)):
             # we need to subtract i, because the number of pages changes when we delete a page
-            self.writer.remove_page(page_numbers_to_delete[i]-i) 
+            self.__writer.remove_page(page_numbers_to_delete[i]-i) 
 
     def write(self):
-        self.writer.write(self.output_file_name)
+        """
+        Write the modified PDF to the output file.
+        """
+        self.__writer.write(self.output_file_name)
 
     def __is_date(self, s: str) -> bool:
         try:
