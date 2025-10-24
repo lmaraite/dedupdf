@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Leon Maraite
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import unittest
 import os
 from pypdf import PdfReader

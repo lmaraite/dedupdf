@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Leon Maraite
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """Main entry point for dedupdf.
 
 Removes duplicated pages from PDF files (like animations in PDF export slides).

@@ -40,3 +40,14 @@ conda run python main.py test.pdf
 ```
 conda run python main.py test.pdf -o test-clean.pdf
 ```
+
+### Testing
+
+#### Conda
+Run tests with conda:
+```
+conda run python -m unittest tests
+```
+
+### License
+Please see the file [LICENSE.md](LICENSE.md) for further information about how this project is licensed.
